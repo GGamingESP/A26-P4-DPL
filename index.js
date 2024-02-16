@@ -21,11 +21,11 @@ app.post("/api/users", (req, res) => {
     _id: crypto.randomUUID()
   }
   userArray.push(newUser);
-  res.json(newUser, 200)
+  res.json(newUser)
 })
 
 app.get("/api/users", (req, res) => {
-  res.json(userArray, 200);
+  res.json(userArray);
 })
 
 app.post('/api/users/:_id/exercises', (req, res) => {
