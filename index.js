@@ -12,7 +12,6 @@ app.get('/', (req, res) => {
 });
 
 let userArray = [];
-let logArray = [] ;
 
 app.post("/api/users", (req, res) => {
   let username = req.body.username ;
@@ -30,21 +29,25 @@ app.get("/api/users", (req, res) => {
 
 app.post('/api/users/:_id/exercises', (req, res) => {
   try {
-    const userIndex = users.findIndex(user => user._id === req.params._id);
+    const userId = req.params._id;
+    const user = userArray.find(user => user._id === userId);
 
-    if (userIndex === -1) {
-      res.status(404).json({ error: 'User not found' });
-      return;
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    const exerciseData = {
-      description: req.body.description,
-      duration: req.body.duration,
-      date: req.body.date || new Date().toDateString()
-    };
+    const { description, duration, date = new Date().toDateString() } = req.body;
 
-    users[userIndex].log.push(exerciseData);
-    res.json(users[userIndex]);
+
+    const exercise = { description, duration, date };
+    user.log.push(exercise);
+
+    // Update user data in memory... (replace with your persistence mechanism)
+
+    userArray.filter((users) => users._id !== user._id);
+    userArray.push(user)
+
+    res.json(user);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -53,16 +56,16 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 
 app.get('/api/users/:_id/logs', (req, res) => {
   try {
-    const user = users.find(user => user._id === req.params._id);
+    const userId = req.params._id;
+    const user = userArray.find(user => user._id === userId);
 
     if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
+      return res.status(404).json({ error: 'User not found' });
     }
 
     const { from, to, limit } = req.query;
 
-    let filteredLog = user.log;
+    let filteredLog = user.log.slice();
 
     if (from) {
       filteredLog = filteredLog.filter(log => new Date(log.date) >= new Date(from));
