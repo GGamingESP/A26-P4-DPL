@@ -17,7 +17,8 @@ app.post("/api/users", (req, res) => {
   let usernames = req.body.username ;
   let newUser = {
     username: usernames,
-    _id: crypto.randomUUID()
+    _id: crypto.randomUUID(),
+    log: [],
   }
   userArray.push(newUser);
   res.json(newUser)
