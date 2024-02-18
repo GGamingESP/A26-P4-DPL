@@ -21,7 +21,7 @@ app.post("/api/users", (req, res) => {
     log: [],
   }
   userArray.push(newUser);
-  res.json(newUser)
+  res.json({newUser})
 })
 
 app.get("/api/users", (req, res) => {
@@ -31,7 +31,7 @@ app.get("/api/users", (req, res) => {
       username: user.username,
     };
   });
-  res.json(userResponse);
+  res.json({userResponse});
 })
 
 app.post('/api/users/:_id/exercises', (req, res) => {
