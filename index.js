@@ -14,9 +14,9 @@ app.get('/', (req, res) => {
 let userArray = [];
 
 app.post("/api/users", (req, res) => {
-  let username = req.body.username ;
+  let usernames = req.body.username ;
   let newUser = {
-    username: username,
+    username: usernames,
     _id: crypto.randomUUID()
   }
   userArray.push(newUser);
@@ -24,7 +24,13 @@ app.post("/api/users", (req, res) => {
 })
 
 app.get("/api/users", (req, res) => {
-  res.json(userArray);
+  let userResponse = userArray.map((user) => {
+    return {
+      _id: user._id,
+      username: user.username,
+    };
+  });
+  res.json(userResponse);
 })
 
 app.post('/api/users/:_id/exercises', (req, res) => {
@@ -41,8 +47,6 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 
     const exercise = { description, duration, date };
     user.log.push(exercise);
-
-    // Update user data in memory... (replace with your persistence mechanism)
 
     userArray.filter((users) => users._id !== user._id);
     userArray.push(user)
