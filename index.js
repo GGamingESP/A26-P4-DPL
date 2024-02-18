@@ -15,23 +15,29 @@ let userArray = [];
 
 app.post("/api/users", (req, res) => {
   let usernames = req.body.username ;
+  let id = crypto.randomUUID() ;
   let newUser = {
     username: usernames,
-    _id: crypto.randomUUID(),
+    _id: id,
     log: [],
   }
+
+  let sendUser = {
+    username: usernames,
+    _id: id
+  }
   userArray.push(newUser);
-  res.json({newUser})
+  res.json({sendUser})
 })
 
 app.get("/api/users", (req, res) => {
   let userResponse = userArray.map((user) => {
     return {
-      _id: user._id,
       username: user.username,
+      _id: user._id
     };
   });
-  res.json({userResponse});
+  res.json(userResponse);
 })
 
 app.post('/api/users/:_id/exercises', (req, res) => {
@@ -49,10 +55,18 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     const exercise = { description, duration, date };
     user.log.push(exercise);
 
-    userArray.filter((users) => users._id !== user._id);
+    userArray = userArray.filter((users) => users._id !== user._id);
     userArray.push(user)
 
-    res.json(user);
+    let response = {
+      username: user.username,
+      description: description,
+      duration: duration,
+      date: date,
+      _id: user._id
+    }
+
+    res.json(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
